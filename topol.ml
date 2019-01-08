@@ -6,9 +6,8 @@ open PMap
 exception Cykliczne
 
 (* Tworzy mapę, która przyporządkowuje id (liczby 0, 1, 2, ...) 
- * wierzchołkom grafu. Początkowe numery (0, 1, 2, ...)
- * są zajmowane przez kolejne pierwsze elementy
- * par na liście lst (zgodnej ze specyfikacją funkcji topol). *)
+ * wierzchołkom grafu, zgodnie z kolejnością ich występowania jako 
+ * pierwsze elementy par na liście lst (zgodnej ze specyfikacją funkcji topol). *)
 let map_init lst =
         let add_id =
                 fun (map, siz) a -> 
@@ -19,17 +18,17 @@ let map_init lst =
         in mapa
 
 (* Modyfikuje listę sąsiedztwa, tak aby każdy wierzchołek grafu 
- * miał na niej swoją listę. Elementy na wynikowej liście są ułożone 
- * według kolejnych id przypisanym wierzchołkom przez mapę map. *)
-let edges_init lst map =
-        let len = List.length lst
+ * miał na niej swoją listę. *) 
+let edges_init lst =
+        let map = map_init lst
+        in let len = List.length lst
         in let additional_vertices =
                 foldi (fun a id acc -> if id >= len then ((a, []) :: acc) else acc) map []
         in lst @ (List.rev additional_vertices)
 
 let topol lst =
-        let mapa = map_init lst
-        in let edges = edges_init lst mapa
+        let edges = edges_init lst
+        in let mapa = map_init edges
         in let to_id = fun a -> find a mapa
         in let list_to_id = fun l -> List.map to_id l 
         (* Tablica list sąsiadów wierzchołków. *)
