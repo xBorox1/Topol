@@ -24,7 +24,7 @@ let map_init lst =
 let edges_init lst map =
         let len = List.length lst
         in let additional_vertices =
-                foldi (fun a id acc -> if id >= len then (a, [])::acc else acc) map []
+                foldi (fun a id acc -> if id >= len then ((a, []) :: acc) else acc) map []
         in lst @ (List.rev additional_vertices)
 
 let topol lst =
@@ -55,20 +55,20 @@ let topol lst =
         in let sub_deg = fun id ->
                 begin
                         deg.(id) <- deg.(id) - 1;
-                        if deg.(id) = 0 then cut := id::(!cut);
+                        if deg.(id) = 0 then cut := (id :: (!cut));
                 end;
         (* Funkcja usuwająca wierzchołek i aktualizująca przy tym deg i cut. *)
         in let sub_degs l = List.iter sub_deg l
         in begin
                 Array.iter add_degs neighbours;
                 (* Inicjalizowanie listy cut. *)
-                Array.iteri (fun id d -> if d = 0 then cut := (id::!cut)) deg;
+                Array.iteri (fun id d -> if d = 0 then cut := (id :: !cut)) deg;
                 while !cut <> []
                 do
                       (* Usuwanie wierzchołka, do którego nic nie wchodzi, z grafu. *)
                       let x = List.hd !cut in
                       begin
-                              topo := vertices.(x)::!topo;
+                              topo := (vertices.(x) :: !topo);
                               cut := List.tl !cut;
                               sub_degs neighbours.(x);
                       end;
